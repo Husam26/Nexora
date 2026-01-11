@@ -4,11 +4,13 @@ const connectDB = require("./src/config/db");
 const { startTaskReminderCron } = require("./src/cron/taskReminder");
 const cron = require("node-cron");
 const runEmailScheduler  = require("./src/cron/emailScheduler");
+const { startInvoiceFollowUpCron } = require("./src/cron/invoiceFollowUp");
 
 connectDB();
 
 // ✅ START CRON AFTER DB CONNECT
 startTaskReminderCron();
+startInvoiceFollowUpCron();
 
 cron.schedule("* * * * *", async () => {
   await runEmailScheduler();

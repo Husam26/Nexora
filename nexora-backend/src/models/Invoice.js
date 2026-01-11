@@ -49,6 +49,9 @@ const invoiceSchema = new mongoose.Schema(
       ref: "Workspace",
       required: true,
     },
+
+    followUpTaskCreated: { type: Boolean, default: false },
+    followUpTaskId: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
   },
   { timestamps: true }
 );

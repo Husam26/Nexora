@@ -115,6 +115,68 @@ exports.updateInvoiceStatus = async (req, res) => {
   }
 };
 
+/* UPDATE INVOICE */
+exports.updateInvoice = async (req, res) => {
+  try {
+    const {
+      customer,
+      items,
+      taxPercent,
+      discount,
+      issueDate,
+      dueDate,
+    } = req.body;
+
+    const invoice = await Invoice.findOne({
+      _id: req.params.id,
+      workspace: req.user.workspaceId,
+    });
+
+    if (!invoice)
+      return res.status(404).json({ message: "Invoice not found" });
+
+    if (
+      req.user.role !== "admin" &&
+      invoice.createdBy.toString() !== req.user.id.toString()
+    ) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Update fields
+    if (customer) invoice.customer = customer;
+    if (items) {
+      const {
+        items: itemsWithTotal,
+        subtotal,
+        taxAmount,
+        totalAmount,
+      } = calculateInvoice(items, taxPercent || invoice.taxPercent, discount || invoice.discount);
+      invoice.items = itemsWithTotal;
+      invoice.subtotal = subtotal;
+      invoice.taxAmount = taxAmount;
+      invoice.totalAmount = totalAmount;
+    }
+    if (taxPercent !== undefined) invoice.taxPercent = taxPercent;
+    if (discount !== undefined) invoice.discount = discount;
+    if (issueDate) invoice.issueDate = issueDate;
+    if (dueDate !== undefined) {
+      invoice.dueDate = dueDate;
+      // Edge case: If dueDate is updated to a future date, reset followUpTaskCreated
+      if (dueDate && new Date(dueDate) > new Date()) {
+        invoice.followUpTaskCreated = false;
+        invoice.followUpTaskId = undefined;
+      }
+    }
+
+    await invoice.save();
+
+    res.json(invoice);
+  } catch (err) {
+    console.error("Update Invoice Error:", err);
+    res.status(500).json({ message: "Failed to update invoice" });
+  }
+};
+
 /* DELETE INVOICE (ADMIN ONLY) */
 exports.deleteInvoice = async (req, res) => {
   try {

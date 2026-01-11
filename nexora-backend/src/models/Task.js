@@ -43,6 +43,9 @@ const TaskSchema = new mongoose.Schema(
       estimatedTime: String,
       note: String,
     },
+
+    source: { type: String }, // e.g., "invoice"
+    sourceId: { type: mongoose.Schema.Types.ObjectId }, // e.g., invoice._id
   },
   { timestamps: true }
 );

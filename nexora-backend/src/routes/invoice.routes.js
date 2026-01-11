@@ -9,6 +9,7 @@ const {
   getInvoices,
   getInvoiceById,
   updateInvoiceStatus,
+  updateInvoice,
   deleteInvoice
 } = require("../controllers/invoice.controller");
 
@@ -23,6 +24,9 @@ router.get("/:id", auth, getInvoiceById);
 
 // Update invoice status
 router.put("/:id/status", auth, updateInvoiceStatus);
+
+// Update invoice
+router.put("/:id", auth, updateInvoice);
 
 router.delete("/:id", auth, adminOnly, deleteInvoice); // 👈 ADMIN ONLY
 
