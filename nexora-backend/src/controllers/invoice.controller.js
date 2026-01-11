@@ -70,21 +70,19 @@ exports.getInvoices = async (req, res) => {
 exports.getInvoiceById = async (req, res) => {
   try {
     const invoice = await Invoice.findOne({
-      _id: req.params.id,
-      workspace: req.user.workspaceId, // 🔒 isolation
-      ...(req.user.role !== "admin" && { createdBy: req.user.id }),
+      invoiceNumber: req.params.id, // <-- use invoiceNumber instead of _id
+      workspace: req.user.workspaceId,
     });
 
-    if (!invoice) {
-      return res.status(404).json({ msg: "Invoice not found" });
-    }
+    if (!invoice) return res.status(404).json({ msg: "Invoice not found" });
 
     res.json(invoice);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ msg: "Failed to fetch invoice" });
   }
 };
+
 
 /* UPDATE STATUS */
 exports.updateInvoiceStatus = async (req, res) => {

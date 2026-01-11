@@ -196,7 +196,7 @@ export default function InvoiceDashboard() {
                     transition: { delay: idx * 0.05 },
                   }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  onClick={() => navigate(`/invoices/${inv._id}`)}
+                  onClick={() => navigate(`/invoices/${inv.invoiceNumber}`)}
                   className="group relative bg-white border border-slate-100 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-200 transition-all duration-500"
                 >
                   {/* Status Side Ribbon */}

@@ -46,6 +46,12 @@ const TaskSchema = new mongoose.Schema(
 
     source: { type: String }, // e.g., "invoice"
     sourceId: { type: mongoose.Schema.Types.ObjectId }, // e.g., invoice._id
+
+    closedReason: { type: String },
+    closedAt: { type: Date },
+    closedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
+    reminderLog: [{ sentAt: { type: Date, default: Date.now } }],
   },
   { timestamps: true }
 );

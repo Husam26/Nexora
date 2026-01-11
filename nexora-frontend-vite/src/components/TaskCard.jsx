@@ -27,6 +27,8 @@ export default function TaskCard({
   isAdmin,
   onEdit,
   onDelete,
+  onDetail,
+  onCloseTask,
 }) {
   /* ---------- Status Config ---------- */
   const statusConfig = {
@@ -78,7 +80,8 @@ export default function TaskCard({
     <motion.div
       layout
       whileHover={{ y: -5 }}
-      className="group relative bg-white border border-slate-200/60 rounded-[2rem] p-7 transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.04)] hover:border-indigo-200/50"
+      onClick={onDetail}
+      className="group relative bg-white border border-slate-200/60 rounded-[2rem] p-7 transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.04)] hover:border-indigo-200/50 cursor-pointer"
     >
       {/* Priority Accent Bar */}
       <div
@@ -126,11 +129,14 @@ export default function TaskCard({
           )}
         </div>
 
-        {isAdmin && (
+        {isAdmin && task.status !== "done" && (
           <div className="flex gap-1">
             {task.status !== "done" && (
               <button
-                onClick={onEdit}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
                 className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all"
               >
                 <Edit3 className="w-4 h-4" />
@@ -138,7 +144,10 @@ export default function TaskCard({
             )}
 
             <button
-              onClick={onDelete}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
               className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all"
             >
               <Trash2 className="w-4 h-4" />
@@ -217,12 +226,13 @@ export default function TaskCard({
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() =>
-              onStatusUpdate(
-                task._id,
-                task.status === "pending" ? "in_progress" : "done"
-              )
-            }
+            onClick={() => {
+              if (task.status === "pending") {
+                onStatusUpdate(task._id, "in_progress");
+              } else if (task.status === "in_progress") {
+                onCloseTask(task); // Open close modal
+              }
+            }}
             className="bg-slate-900 text-white px-7 py-3 rounded-2xl text-xs font-black hover:bg-indigo-600 transition-all"
           >
             {task.status === "pending" ? "INITIATE TASK" : "FINALIZE TASK"}
