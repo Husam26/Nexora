@@ -90,7 +90,7 @@ exports.updateInvoiceStatus = async (req, res) => {
     const { status } = req.body;
 
     const invoice = await Invoice.findOne({
-      _id: req.params.id,
+      invoiceNumber: req.params.id,
       workspace: req.user.workspaceId,
     });
 
